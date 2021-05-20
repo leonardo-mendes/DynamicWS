@@ -1,0 +1,56 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+logs/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+Thumbs.db
+.DS_Store
+.gradle
+build/
+**/src/main/generated
+target/
+out/
+.idea
+mongo/
+*.iml
+*.ipr
+*.iws
+.project
+.settings
+.classpath
+
+### Karate DSL ###
+karate/target/
+karate/.idea
+karate/*.iws
+karate/*.iml
+karate/*.ipr
+karate/out/

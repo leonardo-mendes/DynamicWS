@@ -1,0 +1,104 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+}
+
+plugins {
+    id "org.springframework.boot" version "2.2.3.RELEASE"
+    id "io.spring.dependency-management" version "1.0.8.RELEASE"
+    id "java"
+    id "com.github.sherter.google-java-format" version "0.8"
+}
+
+apply plugin: "java"
+
+group = "com.soap.connector"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_13
+    targetCompatibility = JavaVersion.VERSION_13
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('springCloudVersion', "Hoxton.SR4")
+    set('googleFormatVersion', "1.7")
+    set('mockitoVersion', "2.13.0")
+    set('springFox', "2.10.5")
+    set('lombok', "1.18.8")
+    set('apacheCommonsVersion', "2.6")
+    set('apacheCommonsTextVersion', "1.8")
+    set('axisVersion', "1.4")
+    set('javaxVersion', "1.1")
+    set('commonsDiscoveryVersion', "0.2")
+    set('predic8Version', "1.6.3")
+    set('jsonVersion', "20201115")
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-web-services"
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation "io.springfox:springfox-swagger2:${springFox}"
+    implementation "io.springfox:springfox-data-rest:${springFox}"
+    implementation "io.springfox:springfox-swagger-ui:${springFox}"
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    implementation "com.google.googlejavaformat:google-java-format:${googleFormatVersion}"
+    implementation "commons-io:commons-io:${apacheCommonsVersion}"
+
+    implementation "org.apache.axis:axis:${axisVersion}"
+    implementation "javax.jws:javax.jws-api:${javaxVersion}"
+    implementation "javax.xml:jaxrpc-api:${javaxVersion}"
+    implementation "commons-discovery:commons-discovery:${commonsDiscoveryVersion}"
+    implementation "com.predic8:soa-model-core:${predic8Version}"
+
+    implementation "org.json:json:${jsonVersion}"
+
+    compile "org.springframework.boot:spring-boot-starter-actuator"
+    compile "org.apache.commons:commons-text:${apacheCommonsTextVersion}"
+    compileOnly "org.projectlombok:lombok:${lombok}"
+
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    annotationProcessor "org.projectlombok:lombok:${lombok}"
+
+    testCompileOnly "org.projectlombok:lombok"
+    testAnnotationProcessor "org.projectlombok:lombok"
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude group: "org.junit.vintage", module: "junit-vintage-engine"
+    }
+    testImplementation "org.mockito:mockito-inline:${mockitoVersion}"
+
+}
+
+verifyGoogleJavaFormat.dependsOn "googleJavaFormat"
+
+googleJavaFormat {
+    options style: 'AOSP'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+springBoot {
+    buildInfo()
+}

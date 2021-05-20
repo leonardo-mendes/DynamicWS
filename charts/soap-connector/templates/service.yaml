@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "microservice.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "microservice.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: {{ .Values.service.ports.name }}
+      protocol: {{ .Values.service.ports.protocol }}
+      port: {{ tpl .Values.service.ports.port $ }}
+      targetPort: {{ tpl .Values.service.ports.targetPort $ }}
+  selector:
+    {{- include "microservice.selectorLabels" . | nindent 4 }}

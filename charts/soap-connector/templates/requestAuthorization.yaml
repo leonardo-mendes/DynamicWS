@@ -1,0 +1,85 @@
+{{- if .Values.istio.auth.enabled }}
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: "{{ template "microservice.fullname" . }}-{{ .Values.namespace }}-auth"
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: "{{ template "microservice.fullname" . }}"
+  rules:
+  - from:
+    - source:
+        requestPrincipals: ["*"]
+       
+{{- if .Values.istio.auth.excludePathAuthEnabled }}
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: "{{ template "microservice.fullname" . }}-{{ .Values.namespace }}-exclude-auth"
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: "{{ template "microservice.fullname" . }}"
+  action: ALLOW
+  rules:
+  - to:
+    - operation:
+        paths: 
+       {{- range $keyvalue := $.Values.istio.auth.excludePathAuth }}
+        - {{ $keyvalue }}
+       {{- end }}
+{{ end }}
+
+       
+{{- if .Values.istio.auth.internalAllowEnabled }}
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: "{{ template "microservice.fullname" . }}-{{ .Values.namespace }}-exclude-internal"
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: "{{ template "microservice.fullname" . }}"
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals: 
+       {{- range $keyvalue := $.Values.istio.auth.internalAllow }}
+        - {{ $keyvalue }}
+       {{- end }}
+{{ end }}
+{{ end }}
+
+{{- if .Values.istio.whitelist.enabled }}
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: "{{ template "microservice.fullname" . }}-{{ .Values.namespace }}-ip-whitelist"
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: istio-ingressgateway
+  action: DENY
+  rules:
+  - from:
+    - source:
+       notIpBlocks:
+     {{- range $keyvalue := $.Values.istio.whitelist.networkList }}
+       - {{ $keyvalue | quote }}
+     {{- end }}
+    to:
+    - operation:
+        ports:
+     {{- range $keyvalue := $.Values.istio.whitelist.toPortList }}
+        - {{ $keyvalue | quote }}
+     {{- end }}
+{{ end }}

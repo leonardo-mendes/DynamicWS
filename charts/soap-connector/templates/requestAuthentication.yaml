@@ -1,0 +1,15 @@
+{{- if ( .Values.istio.auth.enabled) }}
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+ name: {{ template "microservice.fullname" . }}-{{ .Values.namespace }}-ra
+ namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "microservice.fullname" . }}
+  jwtRules:
+  - issuer: {{ .Values.istio.auth.issuer }}
+    jwksUri: {{ .Values.istio.auth.jwksUri }}
+    forwardOriginalToken: {{ .Values.istio.auth.forwardOriginalToken }}
+{{ end }}
